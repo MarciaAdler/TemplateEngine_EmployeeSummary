@@ -2,7 +2,8 @@ var inquirer = require("inquirer");
 var jest = require("jest");
 
 const Manager = require('./manager.js');
-
+const Engineer = require('./engineer.js');
+const Intern = require('./intern.js');
 function generalInfo() {
     inquirer
         .prompt([
@@ -24,17 +25,17 @@ function generalInfo() {
             },
         ])
         .then(function(data){
-            var name = data.name;
-            var title = data.title;
-            var id = data.id; 
-            if(role==='Manager'){
+            const name = data.name;
+            const title = data.title;
+            const id = data.id; 
+            if(title==='Manager'){
                 roleManager(name,id,title);
+           }
+            if(title==='Engineer'){
+                roleEngineer(name,id,title);
             }
-            if(role==='Engineer'){
-                roleEngineer();
-            }
-            if(role==='Intern'){
-                roleIntern();
+            if(title==='Intern'){
+                roleIntern(name,id,title);
             }
         }) 
             
@@ -47,27 +48,34 @@ function roleManager(name,id,title){
                 name: "officeNumber" 
             },
         ]).then(function(data){
-            var manager = new Manager(name,id,title,data.officeNumber);
-            console.log(manager.getName())
+            let manager = new Manager(name,id,title,data.officeNumber);
+            console.log(manager.getName(),manager.getRole(),manager.getId());
+            
         })
 }
-function roleEngineer(){
+function roleEngineer(name,id,title){
     inquirer.prompt([
             {
                 type: "input",
                 message: "What is your GitHub Username?",
                 name: "username" 
             },
-        ])
+        ]).then(function(data){
+            let engineer = new Engineer(name,id,title,data.username);
+            console.log(engineer.getName(),engineer.getRole(),data.username);
+        })
 }
-function roleIntern(){
+function roleIntern(name,id,title){
     inquirer.prompt([
             {
                 type: "input",
                 message: "What is your School?",
                 name: "school" 
             },
-        ])
+        ]).then(function(data){
+            let intern = new Intern(name,id,title,data.school);
+            console.log(intern.getName(),intern.getRole(),data.school);
+        })
 }
 
  generalInfo();   

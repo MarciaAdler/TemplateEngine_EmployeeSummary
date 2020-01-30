@@ -7,14 +7,14 @@ class Employee {
     getName(){
        return this.name; 
     }
-    getid(){
+    getId(){
         return this.id;
     }
     getEmail() {
         return this.name +'@fakemail.com';
     }
     getRole(){
-        return 'Employee';
+        return this.title;
     }    
 }
 
