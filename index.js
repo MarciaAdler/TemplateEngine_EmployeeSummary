@@ -7,6 +7,10 @@ const Manager = require('./lib/manager.js');
 const Engineer = require('./lib/engineer.js');
 const Intern = require('./lib/intern.js');
 const team = [];
+let updatedInternHTML = '';
+let updatedManagerHTML = '';
+let updatedEngineerHTML = '';
+let teamMates = '';
 // check is team is empty
 const addTeamMember = () => {
     if(team.length > 0){
@@ -25,7 +29,12 @@ const addTeamMember = () => {
                 addIntern();
             } else if (title === "Print Team"){
                 printTeam();
+                
+                
+                
+                
             }
+
         }) 
     } else {
         addManager();
@@ -65,10 +74,9 @@ function addManager(){
             officeNumber
             );
             team.push(manager);
-            console.log(team);
+            
             addTeamMember();
             
-            //console.log(manager.getName(),manager.getRole(),manager.getId());
             
         })
 }
@@ -103,9 +111,9 @@ function addEngineer(){
         github
         );
         team.push(engineer);
-        console.log(team);
+        
         addTeamMember();
-        //console.log(engineer.getName(),engineer.getRole(),data.username);
+        
     })
 }
 function addIntern(){
@@ -139,65 +147,73 @@ function addIntern(){
             school
             );
             team.push(intern);
-            console.log(team);
+            //console.log(team);
             addTeamMember();
-            //console.log(intern.getName(),intern.getRole(),data.school);
+            
+            
 
     })
 }
+  
 function printTeam(){
-    const readFileAsync = util.promisify(fs.readFile);
-    const appendFileAsync = util.promisify(fs.appendFile);
-    team.forEach(async teamMember =>{ 
+    //const appendFileAsync = util.promisify(fs.appendFile);
+    team.forEach( teamMember =>{ 
+        
         if(teamMember.getRole()==="Manager"){
             const { name, id, email, officeNumber } = teamMember;
-            async function updateManagerHTML() {
-                const managerHTML = await readFileAsync('./templates/manager.html', 'utf8');
-                const updatedManagerHTML =  managerHTML.replace(`{{ Name }}`, `${name}`).replace(`{{ title }}`, `Manager`).replace(`{{ id }}`, `${id}`).replace(`{{ email }}`, `${email}`).replace(`{{ officeNum }}`, `${officeNumber}`);
+            function updateManager() { 
+                fs.readFile('./templates/manager.html', 'utf8', (err, data) => {
+                    //console.log(data)
+                    updatedManagerHTML =  data.replace(`{{ Name }}`, `${name}`).replace(`{{ title }}`,`Manager`).replace(`{{ id }}`, `${id}`).replace(`{{ email }}`, `${email}`).replace(`{{ officeNum }}`,`${officeNumber}`);
+              
+                    teamMates = teamMates.concat(updatedManagerHTML); 
+         
+                });  
                 
-                await appendFileAsync('./templates/main.html',updatedManagerHTML, 'utf8', (error,data) => {
-                    if(error) throw error;
-                   console.log('Manager success');
-                   
-               })
-               
-             }
-             updateManagerHTML(); 
+            }    
+            updateManager();
         } else if (teamMember.getRole()==="Engineer"){
             const { name, id, email, github } = teamMember;
-            async function updateEngineerHTML() {
-                const engineerHTML = await readFileAsync('./templates/engineer.html', 'utf8');
-                const updatedEngineerHTML =  engineerHTML.replace(`{{ Name }}`, `${name}`).replace(`{{ title }}`, `Engineer`).replace(`{{ id }}`, `${id}`).replace(`{{ email }}`, `${email}`).replace(`{{ username }}`,`${github}`);
-                console.log(`${github}`);
-                await appendFileAsync('./templates/main.html',updatedEngineerHTML, 'utf8', (error,data) => {
-                    if(error) throw error;
-                    console.log('Engineer success');
-                })
-                
-             }
-             updateEngineerHTML();
-             
+            function updateEngineer(){
+                fs.readFile('./templates/engineer.html','utf8', (err,data) => {
+                    updatedEngineerHTML = data.replace(`{{ Name }}`, `${name}`).replace(`{{ title }}`,`Engineer`).replace(`{{ id }}`, `${id}`).replace(`{{ email }}`, `${email}`).replace(`{{ username }}`,`${github}`);
+                    teamMates += updatedEngineerHTML; 
+                    //console.log('success engineers',teamMates);
+                    createTeamHTML();
+                }) 
+            }
+            updateEngineer();
+            
         }else if (teamMember.getRole()==="Intern"){
             const { name, id, email, school } = teamMember;
-            async function updateInternHTML() {
-                const InternHTML = await readFileAsync('./templates/intern.html', 'utf8');
-                const updatedInternHTML =  InternHTML.replace(`{{ Name }}`, `${name}`).replace(`{{ title }}`, `Intern`).replace(`{{ id }}`, `${id}`).replace(`{{ email }}`, `${email}`).replace(`{{ school }}`,`${school}`);
-                
-                await appendFileAsync('./templates/main.html',updatedInternHTML, 'utf8', (error,data) => {
-                    if(error) throw error;
-                    console.log('Intern success');
+            function updateIntern(){
+                fs.readFile('./templates/intern.html','utf8',(err,data)=> {
+                    updatedInternHTML = data.replace(`{{ Name }}`, `${name}`).replace(`{{ title }}`,`Intern`).replace(`{{ id }}`, `${id}`).replace(`{{ email }}`, `${email}`).replace(`{{ school }}`,`${school}`);
+                    
+                    teamMates += updatedInternHTML;
+                    createTeamHTML();
                 })
+            }
+            updateIntern();
                 
-             }
-             updateInternHTML();
+        }     
+        
+    })   
+          
+} 
+         
+
+ function createTeamHTML() {
   
-        } 
+    fs.readFile('./templates/teamtemplate.html', 'utf8',(err,data) =>{
+        if(err) throw error;
+        //console.log(data);
+        const newTeamHTML =  data.replace(`{{ content }}`, teamMates);
+        console.log('newTeamHTML', newTeamHTML);
+        fs.writeFile('./output/team.html',newTeamHTML,'utf8',(err)=>{
+            if (err) throw error;
+            console.log('success');
+        })
     })
-    
-}
-
-
-
-
-addTeamMember();
-  
+}  
+addTeamMember();  
