@@ -19,9 +19,9 @@ const addTeamMember = () => {
         {
           type: "list",
           name: "title",
-          message: "What type of team member are you?",
-          choices: ["Engineer", "Intern", "Print Team"]
-        }
+          message: "What type of team member do you want to add?",
+          choices: ["Engineer", "Intern", "Print Team"],
+        },
       ])
       .then(({ title }) => {
         if (title === "Engineer") {
@@ -42,26 +42,26 @@ function addManager() {
     .prompt([
       {
         type: "input",
-        message: "What is your name?",
-        name: "name"
+        message: "What is the Manager's name?",
+        name: "name",
       },
       {
         type: "input",
-        message: "What is your id?",
-        name: "id"
+        message: "What is the manager's id?",
+        name: "id",
       },
       {
         type: "input",
-        message: "What is your email?",
-        name: "email"
+        message: "What is the manager's email?",
+        name: "email",
       },
       {
         type: "input",
-        message: "What is your office number?",
-        name: "officeNumber"
-      }
+        message: "What is the manager's office number?",
+        name: "officeNumber",
+      },
     ])
-    .then(response => {
+    .then((response) => {
       const { name, id, email, officeNumber } = response;
       const manager = new Manager(name, id, email, officeNumber);
       team.push(manager);
@@ -74,26 +74,26 @@ function addEngineer() {
     .prompt([
       {
         type: "input",
-        message: "What is your name?",
-        name: "name"
+        message: "What is the Engineer's name?",
+        name: "name",
       },
       {
         type: "input",
-        message: "What is your id?",
-        name: "id"
+        message: "What is the engineer's id?",
+        name: "id",
       },
       {
         type: "input",
-        message: "What is your email?",
-        name: "email"
+        message: "What is the engineer's email?",
+        name: "email",
       },
       {
         type: "input",
-        message: "What is your GitHub Username?",
-        name: "github"
-      }
+        message: "What is the engineer's GitHub Username?",
+        name: "github",
+      },
     ])
-    .then(response => {
+    .then((response) => {
       const { name, id, email, github } = response;
       const engineer = new Engineer(name, id, email, github);
       team.push(engineer);
@@ -106,26 +106,26 @@ function addIntern() {
     .prompt([
       {
         type: "input",
-        message: "What is your name?",
-        name: "name"
+        message: "What is the Intern's name?",
+        name: "name",
       },
       {
         type: "input",
-        message: "What is your id?",
-        name: "id"
+        message: "What is the intern's id?",
+        name: "id",
       },
       {
         type: "input",
-        message: "What is your email?",
-        name: "email"
+        message: "What is the intern's email?",
+        name: "email",
       },
       {
         type: "input",
-        message: "What is your School?",
-        name: "school"
-      }
+        message: "What is the intern's School?",
+        name: "school",
+      },
     ])
-    .then(response => {
+    .then((response) => {
       const { name, id, email, school } = response;
       const intern = new Intern(name, id, email, school);
       team.push(intern);
@@ -136,7 +136,7 @@ function addIntern() {
 
 function printTeam() {
   //const appendFileAsync = util.promisify(fs.appendFile);
-  team.forEach(teamMember => {
+  team.forEach((teamMember) => {
     if (teamMember.getRole() === "Manager") {
       const { name, id, email, officeNumber } = teamMember;
       function updateManager() {
@@ -192,7 +192,7 @@ function createTeamHTML() {
     //console.log(data);
     const newTeamHTML = data.replace(`{{ content }}`, teamMates);
     console.log("newTeamHTML", newTeamHTML);
-    fs.writeFile("./output/team.html", newTeamHTML, "utf8", err => {
+    fs.writeFile("./output/team.html", newTeamHTML, "utf8", (err) => {
       if (err) throw error;
       console.log("success");
     });
